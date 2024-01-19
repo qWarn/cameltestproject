@@ -1,0 +1,26 @@
+spring:
+
+  datasource:
+    password:
+    username:
+    url:
+    driver-class-name:
+
+  jooq:
+    sql-dialect:
+
+  activemq:
+    user:
+    password:
+    broker-url:
+    queues:
+      camel-queue-name:
+
+server:
+  error:
+    include-message: always
+
+camel:
+  servlet:
+    mapping:
+      context-path: /service/*
