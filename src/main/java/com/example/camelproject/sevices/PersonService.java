@@ -17,7 +17,7 @@ public class PersonService {
         return personRepository.count();
     }
 
-    public Person getPersonById(int id) {
+    public Person getPersonById(int id) throws PersonNotFoundException {
         return personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException("Person with id " + id + " not found"));
     }
 

@@ -46,7 +46,6 @@ public class ActivemqRoute extends RouteBuilder {
                     .log(LoggingLevel.ERROR, "${body}")
                     .handled(true)
                 .end()
-                .to("http://localhost:8080/savedUser?httpMethod=GET ");
-
+                .to("http://localhost:8080/savedUser?httpMethod=GET");
     }
 }

@@ -33,3 +33,4 @@ public class TimerRoute extends RouteBuilder {
                     .log(LoggingLevel.ERROR, "User with id ${header.userId} doesn't exist").handled(true);
     }
 }
+
