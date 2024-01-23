@@ -1,0 +1,23 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="Activemq xml route">
+        <from uri="activemq:{{spring.activemq.queues.camel-queue-name}}"/>
+        <onException>
+            <exception>java.lang.RuntimeException</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <setBody>
+                <simple>${exception.message}</simple>
+            </setBody>
+            <log message="${body}" loggingLevel="ERROR"/>
+        </onException>
+        <log message="Got json from Activemq: ${body}" loggingLevel="INFO"/>
+        <process ref="xmlProcessor"/>
+        <to uri="http://localhost:8080/savedUser?httpMethod=GET"/>
+    </route>
+</routes>
+
+
+
+
+

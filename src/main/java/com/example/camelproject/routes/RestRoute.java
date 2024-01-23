@@ -1,8 +1,7 @@
 package com.example.camelproject.routes;
 
-import com.example.camelproject.models.Person;
+import com.example.camelproject.sevices.PersonService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -13,18 +12,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RestRoute extends RouteBuilder {
 
-    private final ObjectMapper objectMapper;
+    private final PersonService personService;
 
     /**
      * Route, which handles requests on http://localhost:8080/service/restRoute consumes application/json.
      * Then sends body to http://localhost:8080/user?userId=id.
-     * @Example:{
-     *      "id":1,
-     *      "name":"Nikita",
-     *      "age":12,
-     *      "email":"Nikita@gmail.com"
-     *      }
+     *
      * @throws Exception
+     * @Example:{ "id":1,
+     * "name":"Nikita",
+     * "age":12,
+     * "email":"Nikita@gmail.com"
+     * }
      */
     @Override
     public void configure() throws Exception {
@@ -32,12 +31,7 @@ public class RestRoute extends RouteBuilder {
                 .routeId("Rest route")
                 .log(LoggingLevel.INFO, "Got body: ${body}")
                 .doTry()
-                    .process(exchange -> {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getIn().setHeader("userId",
-                                objectMapper.readValue(body, Person.class).getId());
-                        exchange.getMessage().setHeader("Person", body);
-                    })
+                    .process(personService::setPersonAndIdToExchange)
                     .toD("http://localhost:8080/user?userId=${header.userId}&bridgeEndpoint=true&httpMethod=GET")
                     .setBody(constant("Success"))
                 .doCatch(JsonProcessingException.class)
