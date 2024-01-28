@@ -5,6 +5,7 @@ import com.example.camelproject.sevices.PersonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
 
 import static org.springframework.util.Assert.*;
 
