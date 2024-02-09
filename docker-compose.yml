@@ -1,0 +1,34 @@
+
+services:
+  postgres:
+    build:
+      dockerfile: DockerfilePostgresql
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - /data/pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: camel_project_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+
+
+  camelapp:
+    container_name: camelapp
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+  activemq:
+    image: webcenter/activemq:latest
+    volumes:
+      - /data/activemq:/data/activemq
+    container_name: activemq
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    environment:
+      ACTIVEMQ_STATIC_QUEUES: test-queue
