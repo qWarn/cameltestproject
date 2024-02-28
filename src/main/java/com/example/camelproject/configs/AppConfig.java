@@ -15,12 +15,13 @@ public class AppConfig {
 
 
     @Bean
-    public ObjectMapper objectMapper(){
+    public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
 
     @Bean
-    public Random random(){
+    public Random random() {
         return new Random();
     }
+
 }
