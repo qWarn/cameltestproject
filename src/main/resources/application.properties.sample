@@ -12,6 +12,7 @@ spring.activemq.broker-url=
 spring.activemq.user=
 spring.activemq.password=
 spring.activemq.queues.camel-queue-name=
+spring.activemq.packages.trusted=com.example.camelproject.models
 
 #server
 server.error.include-message=always
