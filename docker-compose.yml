@@ -10,7 +10,7 @@ services:
     volumes:
       - /data/pg:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: camel_project_db
+      POSTGRES_DB: camel_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
 
@@ -31,4 +31,4 @@ services:
       - "8161:8161"
       - "61616:61616"
     environment:
-      ACTIVEMQ_STATIC_QUEUES: test-queue
+      ACTIVEMQ_STATIC_QUEUES: camel-queue
