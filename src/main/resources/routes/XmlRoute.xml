@@ -2,18 +2,19 @@
     <route id="Activemq xml route">
         <from uri="activemq:{{spring.activemq.queues.camel-queue-name}}"/>
         <onException>
-            <exception>java.lang.RuntimeException</exception>
+            <exception>org.apache.camel.http.base.HttpOperationFailedException</exception>
             <handled>
                 <constant>true</constant>
             </handled>
-            <setBody>
-                <simple>${exception.message}</simple>
-            </setBody>
-            <log message="${body}" loggingLevel="ERROR"/>
+            <process ref="httpOperationFailedProcessor"/>
+            <log message="Caught HttpOperationFailedException with body: ${body}" loggingLevel="ERROR"/>
         </onException>
         <log message="Got json from Activemq: ${body}" loggingLevel="INFO"/>
         <process ref="xmlProcessor"/>
-        <to uri="http://localhost:8080/savedUser?httpMethod=GET"/>
+        <marshal>
+            <json/>
+        </marshal>
+        <to uri="http://localhost:8080/save/user?httpMethod=POST"/>
     </route>
 </routes>
 
