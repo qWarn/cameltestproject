@@ -1,6 +1,7 @@
 package com.example.camelproject.routes;
 
-import com.example.camelproject.sevices.PersonService;
+import com.example.camelproject.processors.HttpOperationFailedProcessor;
+import com.example.camelproject.processors.TimerRouteProcessor;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TimerRoute extends RouteBuilder {
 
-    private final PersonService personService;
+    private final TimerRouteProcessor timerRouteProcessor;
+    private final HttpOperationFailedProcessor httpOperationFailedProcessor;
 
     /**
      * Timer route, which every minute sends request to http://localhost:8080/random/{id} with random userId
@@ -23,12 +25,13 @@ public class TimerRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("timer:RandomPersonTimer?delay=10000&period=60000")
                 .onException(HttpOperationFailedException.class)
-                    .log(LoggingLevel.ERROR, "User with id ${header.userId} doesn't exist")
-                    .handled(true)
+                .process(httpOperationFailedProcessor)
+                .log(LoggingLevel.ERROR, "Caught HttpOperationFailedException with body: ${body}")
+                .handled(true)
                 .end()
                 .routeId("Timer route")
-                    .process(personService::getRandomIdAndSetItToExchange)
-                .toD("http://localhost:8080/random/${header.userId}?httpMethod=GET");
+                .process(timerRouteProcessor)
+                .toD("http://localhost:8080/user/${header.userId}?httpMethod=GET");
     }
 }
 
