@@ -14,7 +14,7 @@ public class XmlProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-          personService.savePersonAndSetItToExchange(exchange);
+          personService.setPersonToExchange(exchange);
     }
 
 }
