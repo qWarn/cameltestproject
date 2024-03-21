@@ -20,3 +20,5 @@ server.error.include-message=always
 #camel
 camel.springboot.routes-include-pattern=classpath:Routes/*
 camel.servlet.mapping.context-path=/service/*
+
+logging.file.path=logs
