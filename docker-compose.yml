@@ -1,13 +1,13 @@
 
 services:
   postgres:
-    build:
-      dockerfile: DockerfilePostgresql
+    image: postgres:16.1
     container_name: postgres
     restart: always
     ports:
       - "5432:5432"
     volumes:
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
       - /data/pg:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: camel_db
@@ -17,6 +17,8 @@ services:
 
   camelapp:
     container_name: camelapp
+    volumes:
+      - logs-volume:/CamelProject/logs
     build:
       dockerfile: Dockerfile
     ports:
@@ -25,10 +27,70 @@ services:
   activemq:
     image: webcenter/activemq:latest
     volumes:
-      - /data/activemq:/data/activemq
+      - ./data/activemq:/data/activemq
     container_name: activemq
     ports:
       - "8161:8161"
       - "61616:61616"
     environment:
       ACTIVEMQ_STATIC_QUEUES: camel-queue
+
+  elasticsearch:
+    image: elasticsearch:7.17.0
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl http://localhost:9200/_cat/health",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  logstash:
+    image: logstash:7.17.0
+    container_name: logstash
+    volumes:
+      - logs-volume:/logs/
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 5044:5044
+      - 9600:9600
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+
+  kibana:
+    image: kibana:7.17.0
+    container_name: kibana
+    ports:
+      - 5601:5601
+    volumes:
+      - ./data/kibana:/usr/share/kibana/data
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
+      ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+volumes:
+  logs-volume:
+
