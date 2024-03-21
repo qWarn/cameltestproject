@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonServiceAspect {
 
-    @Around(value = "within(com.example.camelproject.sevices.PersonService)" +
-            "&& args(org.apache.camel.Exchange)")
+    @Around(value = "within(com.example.camelproject.sevices.PersonService)")
     public Object logServiceMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("Started execution of method " + joinPoint.getSignature().getName());
         Object res;
