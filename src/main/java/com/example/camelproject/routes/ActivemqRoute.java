@@ -10,6 +10,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.http.base.HttpOperationFailedException;
 
+//@Component
 @RequiredArgsConstructor
 public class ActivemqRoute extends RouteBuilder {
 
@@ -39,7 +40,7 @@ public class ActivemqRoute extends RouteBuilder {
                 .handled(true)
                 .end()
                 .routeId("Activemq route")
-                .log(LoggingLevel.INFO, "Got json from Activemq: ${body}")
+                .log(LoggingLevel.INFO, "Got json from Activemq: ${body.toString()}")
                 .process(personService::setPersonToExchange)
                 .marshal(format)
                 .to("http://localhost:8080/save/user?httpMethod=POST");
