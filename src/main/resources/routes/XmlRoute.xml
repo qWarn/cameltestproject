@@ -1,5 +1,5 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="Activemq xml route">
+    <route  id="Activemq xml route">
         <from uri="activemq:{{spring.activemq.queues.camel-queue-name}}"/>
         <onException>
             <exception>org.apache.camel.http.base.HttpOperationFailedException</exception>
@@ -9,7 +9,7 @@
             <process ref="httpOperationFailedProcessor"/>
             <log message="Caught HttpOperationFailedException with body: ${body}" loggingLevel="ERROR"/>
         </onException>
-        <log message="Got json from Activemq: ${body}" loggingLevel="INFO"/>
+        <log message="Got json from Activemq: ${body.toString()}" loggingLevel="INFO"/>
         <process ref="xmlProcessor"/>
         <marshal>
             <json/>
